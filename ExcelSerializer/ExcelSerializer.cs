@@ -70,8 +70,7 @@ namespace ExcelSerializer
                 var values = new Queue<object>();
                 for (int col = 1; col <= columnCount; col++)
                 {
-                    values.Enqueue((workSheet.Cells[row, col]
-                        as Microsoft.Office.Interop.Excel.Range).Value);
+                    values.Enqueue(((Excel.Range) workSheet.Cells[row, col]).Value);
                 }
                 dynamic obj = Activator.CreateInstance<T>();
                 foreach (var propertyName in propertyNames)
