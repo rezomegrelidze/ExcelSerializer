@@ -4,8 +4,9 @@
 
 ## An example where we assume that we have an excel file that contains person objects on each row
 
-`    
-    class Program
+    
+
+`    class Program
     {
         static void Main(string[] args)
         {            var serializer = new ExcelSerializer();
@@ -22,5 +23,4 @@
     {
         public dynamic Name { get; set; }
         public dynamic Age { get; set; }
-    }
-`
+    }`
