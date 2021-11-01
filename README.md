@@ -1,8 +1,8 @@
-# A really simple tool that converts a C# object to an excel file.
+# A simple tool that converts a POCO object to an excel file.
 
 
 
-## This is a really simple example where we assume that we have an excel file that contains person objects on each row
+## An example where we assume that we have an excel file that contains person objects on each row
 `    
     class Program
     {
