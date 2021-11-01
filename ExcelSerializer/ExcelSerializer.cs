@@ -7,7 +7,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelSerializer
 {
-    public class ExcelSerializer : IDisposable
+   public class ExcelSerializer : IDisposable
     {
         private Excel.Application excelType;
 
@@ -16,9 +16,14 @@ namespace ExcelSerializer
             excelType = new Excel.Application { Visible = true };
         }
 
+        public List<T> ExcelFileToData<T>(string filePath, int startRow = 0,int? endRow = null)
+        {
+            return WorksheetToData<T>(excelType.Workbooks.Open(filePath).Worksheets[1],startRow,endRow);
+        }
+
         public Excel.Worksheet DisplayInExcel<T>(IEnumerable<T> data)
         {
-            
+
 
             excelType.Workbooks.Add();
             var workSheet = (Excel.Worksheet)excelType.ActiveSheet;
@@ -47,14 +52,15 @@ namespace ExcelSerializer
                 rowIndex++;
             }
 
-            Excel.Range usedrange = workSheet.UsedRange;
+            var usedrange = workSheet.UsedRange;
             usedrange.Columns.AutoFit();
             usedrange.Rows.AutoFit();
             return workSheet;
         }
 
-        public IEnumerable<T> WorksheetToData<T>(Excel.Worksheet workSheet)
+        public List<T> WorksheetToData<T>(Excel.Worksheet workSheet,int startRow = 0,int? endRow = null)
         {
+            var data = new List<T>();
             var type = typeof(T);
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -62,15 +68,16 @@ namespace ExcelSerializer
 
             Excel.Range userRange = workSheet.UsedRange;
             int columnCount = userRange.Columns.Count;
-            int rowCount = userRange.Rows.Count;
+            int start = startRow;
+            int end = endRow ?? userRange.Rows.Count;
 
 
-            for (int row = 2; row <= rowCount; row++)
+            for (int row = start; row <= end; row++)
             {
                 var values = new Queue<object>();
                 for (int col = 1; col <= columnCount; col++)
                 {
-                    values.Enqueue(((Excel.Range) workSheet.Cells[row, col]).Value);
+                    values.Enqueue(((Excel.Range)workSheet.Cells[row, col]).Value);
                 }
                 dynamic obj = Activator.CreateInstance<T>();
                 foreach (var propertyName in propertyNames)
@@ -78,8 +85,10 @@ namespace ExcelSerializer
                     dynamic value = values.Dequeue();
                     typeof(T).GetProperty(propertyName).SetValue(obj, value);
                 }
-                yield return (T)obj;
+                data.Add((T)obj);
             }
+
+            return data;
         }
 
         private void ReleaseUnmanagedResources()
