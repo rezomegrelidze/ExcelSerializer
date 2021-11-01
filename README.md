@@ -2,7 +2,7 @@
 
 
 
-## An example where we assume that we have an excel file that contains person objects on each row
+## Here's an example usage, where we assume that we have an excel file that contains person objects on each row
 
     
 
