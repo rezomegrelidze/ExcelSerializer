@@ -9,7 +9,8 @@
     class Program
     {
         static void Main(string[] args)
-        {            var serializer = new ExcelSerializer();
+        {   
+            var serializer = new ExcelSerializer();
             var data = serializer.ExcelFileToData<ExcelObj>(@"[write the directory of your excel file.]",1,100);
 
             foreach (var item in data)
